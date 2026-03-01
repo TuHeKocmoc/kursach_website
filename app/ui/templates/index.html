@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}BTC Forecast{% endblock %}
+
+{% block content %}
+<section class="grid">
+  <div class="card">
+    <div class="card-title">Market</div>
+    <div class="row">
+      <div>
+        <div class="label">Symbol</div>
+        <div class="value" id="symbolValue">BTC-USD</div>
+      </div>
+      <div>
+        <div class="label">Last price</div>
+        <div class="value" id="lastPriceValue">—</div>
+      </div>
+      <div>
+        <div class="label">Last time</div>
+        <div class="value" id="lastTimeValue">—</div>
+      </div>
+    </div>
+    <div class="row controls">
+      <label class="control">
+        <span class="label">History</span>
+        <select id="historyPeriod">
+          <option value="3mo">3M</option>
+          <option value="6mo">6M</option>
+          <option value="1y" selected>1Y</option>
+          <option value="2y">2Y</option>
+          <option value="5y">5Y</option>
+          <option value="max">MAX</option>
+        </select>
+      </label>
+      <label class="control">
+        <span class="label">Interval</span>
+        <select id="historyInterval">
+          <option value="1d" selected>1d</option>
+          <option value="1h">1h</option>
+        </select>
+      </label>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="priceChart"></canvas>
+    </div>
+    <div class="muted" id="historyStatus"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Predict</div>
+    <div class="row controls">
+      <label class="control">
+        <span class="label">Model</span>
+        <select id="modelSelect">
+          <option value="pdt" selected>PDT</option>
+          <option value="lstm">LSTM</option>
+          <option value="xgb">XGBoost</option>
+        </select>
+      </label>
+      <label class="control">
+        <span class="label">Horizon (days)</span>
+        <select id="horizonSelect">
+          <option value="1" selected>1</option>
+          <option value="7">7</option>
+          <option value="14">14</option>
+          <option value="30">30</option>
+        </select>
+      </label>
+      <button id="predictBtn" class="btn">Predict</button>
+    </div>
+    <div class="row">
+      <div>
+        <div class="label">Generated at</div>
+        <div class="value" id="predGenAt">—</div>
+      </div>
+      <div>
+        <div class="label">Forecast points</div>
+        <div class="value" id="predCount">—</div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="forecastChart"></canvas>
+    </div>
+    <div class="muted" id="predictStatus"></div>
+  </div>
+</section>
+{% endblock %}
