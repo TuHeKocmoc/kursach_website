@@ -1,11 +1,11 @@
 [project]
 name = "btcforecastpdt"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = [
-    {name = "Danila Riazanov",email = "nixlle@rambler.ru"}
+    {name = "Danila Riazanov",email = "deryazanov@edu.hse.ru"}
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi (>=0.133.0,<0.134.0)",
     "yfinance (>=1.2.0,<2.0.0)",
