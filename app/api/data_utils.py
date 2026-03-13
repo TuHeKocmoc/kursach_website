@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 import pandas as pd
 
@@ -13,9 +13,12 @@ def as_utc(dt: datetime) -> datetime:
 def normalize_download_df(df: Optional[pd.DataFrame], symbol: str) -> pd.DataFrame:
     if df is None or df.empty:
         return pd.DataFrame()
-    if isinstance(df.columns, pd.MultiIndex):
-        lvl0 = df.columns.get_level_values(0)
-        lvl1 = df.columns.get_level_values(1)
+    
+    cols = cast(pd.MultiIndex, df.columns)
+    
+    if isinstance(cols, pd.MultiIndex):
+        lvl0 = cols.get_level_values(0)
+        lvl1 = cols.get_level_values(1)
         if symbol in lvl0:
             out = df.loc[:, pd.IndexSlice[symbol, :]]
             out.columns = out.columns.droplevel(0)
@@ -30,7 +33,7 @@ def normalize_download_df(df: Optional[pd.DataFrame], symbol: str) -> pd.DataFra
 def ts_to_datetime(value: Any) -> Optional[datetime]:
     try:
         ts = pd.Timestamp(value)
-    except Exception:
+    except (TypeError, ValueError):
         return None
     if ts is pd.NaT:
         return None
