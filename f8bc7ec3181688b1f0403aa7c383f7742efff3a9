@@ -1,0 +1,23 @@
+.idea/.gitignore
+  fb6f795517cbde3a 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "f8bc7ec3181688b1f0403aa7c383f7742efff3a9",
+  "prompts": {
+    "fb6f795517cbde3a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ce911-4ea6-7b23-a285-e3840461056f",
+        "model": "unknown"
+      },
+      "human_author": "Danila Riazanov <nixlle@rambler.ru>",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 2,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  }
+}
