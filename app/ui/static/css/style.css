@@ -289,7 +289,7 @@ canvas {
 }
 
 .market-card canvas {
-  height: 300px !important;
+  height: 330px !important;
 }
 
 .small-chart canvas {
@@ -302,7 +302,7 @@ canvas {
   }
 
   .market-card canvas {
-    height: 330px !important;
+    height: 370px !important;
   }
 
   .small-chart canvas {
@@ -316,7 +316,7 @@ canvas {
   }
 
   .market-card canvas {
-    height: 350px !important;
+    height: 390px !important;
   }
 
   .small-chart canvas {
