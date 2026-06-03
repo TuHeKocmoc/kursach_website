@@ -16,7 +16,14 @@ def normalize_download_df(df: Optional[pd.DataFrame], symbol: str) -> pd.DataFra
     
     cols = cast(pd.MultiIndex, df.columns)
     
-    if isinstance(cols, pd.MultiIndex):
+    if isinstance(df.columns, pd.MultiIndex):
+        cols = cast(pd.MultiIndex, df.columns)
+        for level in range(cols.nlevels):
+            values = {str(v).lower() for v in cols.get_level_values(level)}
+            if {"open", "high", "low", "close"}.issubset(values):
+                out = df.copy()
+                out.columns = cols.get_level_values(level)
+                return out
         lvl0 = cols.get_level_values(0)
         lvl1 = cols.get_level_values(1)
         if symbol in lvl0:
@@ -27,7 +34,7 @@ def normalize_download_df(df: Optional[pd.DataFrame], symbol: str) -> pd.DataFra
             out = df.loc[:, pd.IndexSlice[:, symbol]]
             out.columns = out.columns.droplevel(1)
             return out
-    return df
+    return df.copy()
 
 
 def ts_to_datetime(value: Any) -> Optional[datetime]:
