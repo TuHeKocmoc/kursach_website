@@ -1,0 +1,19 @@
+app/ui/static/css/style.css
+  s_60e62771800e80::t_9a375c5bb27c5b 291-294,304-307,318-321,390
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "6cfe7faadd8296c79f49ea3a9cd545b3d3b3f075",
+  "prompts": {},
+  "sessions": {
+    "s_60e62771800e80": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8d9b-2972-7f70-b949-ab62019dbaa1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Danila Riazanov <nixlle@rambler.ru>"
+    }
+  }
+}
