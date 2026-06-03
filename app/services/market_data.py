@@ -25,19 +25,32 @@ def _download_yf(
     end: datetime | None = None,
 ) -> pd.DataFrame:
     yf = _load_yfinance()
-    kwargs: dict[str, Any] = {
+    download_kwargs: dict[str, Any] = {
         "tickers": symbol,
         "interval": interval,
         "progress": False,
         "auto_adjust": False,
         "threads": False,
     }
+    history_kwargs: dict[str, Any] = {
+        "interval": interval,
+        "auto_adjust": False,
+    }
     if start is not None or end is not None:
-        kwargs["start"] = start
-        kwargs["end"] = end
+        download_kwargs["start"] = start
+        download_kwargs["end"] = end
+        history_kwargs["start"] = start
+        history_kwargs["end"] = end
     else:
-        kwargs["period"] = period or "1y"
-    raw = yf.download(**kwargs)
+        download_kwargs["period"] = period or "1y"
+        history_kwargs["period"] = period or "1y"
+
+    raw = yf.download(**download_kwargs)
+    clean = clean_ohlcv(raw)
+    if not clean.empty:
+        return clean
+
+    raw = yf.Ticker(symbol).history(**history_kwargs)
     return clean_ohlcv(raw)
 
 
