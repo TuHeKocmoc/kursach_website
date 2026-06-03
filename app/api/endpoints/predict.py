@@ -1,16 +1,23 @@
 from datetime import datetime, timedelta, timezone
 
-import pandas as pd
-import yfinance as yf
 from fastapi import APIRouter, HTTPException, Query
 
-from app.api.data_utils import as_utc, normalize_download_df, ts_to_datetime
-from app.api.schemas import PredictRequest, PredictResponse, PredictionPoint, ModelsResponse, ModelInfo, BacktestMetrics, EvaluateResponse
+from app.api.data_utils import as_utc, ts_to_datetime
+from app.api.schemas import (
+    BacktestMetrics,
+    EvaluateResponse,
+    ModelInfo,
+    ModelsResponse,
+    PredictionPoint,
+    PredictRequest,
+    PredictResponse,
+)
 from app.ml.features import clean_ohlcv
-from app.ml.models import forecast_from_history, ModelTrainingError, evaluate_many
+from app.ml.models import ModelTrainingError, evaluate_many, forecast_from_history
 from app.services.market_data import download_history
 
 router = APIRouter()
+
 
 @router.get("/models", response_model=ModelsResponse)
 def models() -> ModelsResponse:
@@ -19,39 +26,25 @@ def models() -> ModelsResponse:
             ModelInfo(
                 name="pdt",
                 label="PDT",
-                description="Permutation Decision Tree"
+                description="Permutation Decision Tree",
             ),
             ModelInfo(
                 name="lstm",
                 label="LSTM",
-                description="Long Short-Term Memory neural network"
+                description="Long Short-Term Memory neural network",
             ),
             ModelInfo(
                 name="xgb",
                 label="XGBoost",
-                description="Extreme Gradient Boosting"
+                description="Extreme Gradient Boosting",
             ),
             ModelInfo(
                 name="naive",
                 label="Naive",
-                description="Last-price baseline used for comparison"
+                description="Last-price baseline used for comparison",
             ),
         ]
     )
-
-
-def _mean_daily_return(close: pd.Series, window: int = 30) -> float:
-    s = pd.to_numeric(close, errors="coerce").dropna()
-    if len(s) < 3:
-        return 0.0
-    r = s.pct_change().dropna()
-    if r.empty:
-        return 0.0
-    r = r.tail(window)
-    m = float(r.mean())
-    if not pd.isna(m) and abs(m) < 1.0:
-        return m
-    return 0.0
 
 
 @router.post("/predict", response_model=PredictResponse)
@@ -62,7 +55,7 @@ def predict(req: PredictRequest) -> PredictResponse:
         raise HTTPException(status_code=503, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Failed to download market data: {e}") from e
-    
+
     clean = clean_ohlcv(df).dropna(subset=["Close"])
     if clean.empty:
         raise HTTPException(status_code=404, detail="No market data available for prediction")
@@ -84,7 +77,6 @@ def predict(req: PredictRequest) -> PredictResponse:
         raise HTTPException(status_code=422, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}") from e
-
 
     forecast = [
         PredictionPoint(
@@ -108,6 +100,7 @@ def predict(req: PredictRequest) -> PredictResponse:
         warnings=result.warnings,
     )
 
+
 @router.get("/evaluate", response_model=EvaluateResponse)
 def evaluate(
     symbol: str = Query(default="BTC-USD", min_length=1),
@@ -119,19 +112,23 @@ def evaluate(
         raise HTTPException(status_code=503, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Failed to download market data: {e}") from e
-    
+
     clean = clean_ohlcv(df)
     if clean.empty:
         raise HTTPException(status_code=404, detail="No market data available for evaluation")
 
-    metrics = [
-        BacktestMetrics(**m.to_dict())
-        for m in evaluate_many(
-            clean,
-            ["naive", "pdt", "lstm", "xgb"],
-            horizon_days,
-        )
-    ]
+    try:
+        metrics = [
+            BacktestMetrics(**m.to_dict())
+            for m in evaluate_many(
+                clean,
+                ["naive", "pdt", "lstm", "xgb"],
+                horizon_days,
+            )
+        ]
+    except ModelTrainingError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+
     if not metrics:
         raise HTTPException(status_code=404, detail="No market data available for evaluation")
     return EvaluateResponse(
@@ -139,4 +136,4 @@ def evaluate(
         horizon_days=horizon_days,
         generated_at=as_utc(datetime.now(timezone.utc)),
         metrics=metrics,
-)
+    )

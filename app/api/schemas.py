@@ -47,6 +47,7 @@ class PredictionPoint(BaseModel):
     time: datetime
     value: float
 
+
 class BacktestMetrics(BaseModel):
     model: str
     horizon_days: int
@@ -72,16 +73,19 @@ class PredictResponse(BaseModel):
     metrics: Optional[BacktestMetrics] = None
     warnings: List[str] = Field(default_factory=list)
 
+
 class EvaluateResponse(BaseModel):
     symbol: str = Field(..., min_length=1)
     horizon_days: int = Field(..., ge=1)
     generated_at: datetime
     metrics: List[BacktestMetrics]
 
+
 class ModelInfo(BaseModel):
     name: Literal["pdt", "lstm", "xgb", "naive"]
     label: str
     description: str
+
 
 class ModelsResponse(BaseModel):
     models: List[ModelInfo]

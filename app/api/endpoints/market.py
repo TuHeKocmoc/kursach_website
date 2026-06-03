@@ -2,10 +2,9 @@ from datetime import datetime
 from typing import Optional
 
 import pandas as pd
-import yfinance as yf
 from fastapi import APIRouter, HTTPException, Query
 
-from app.api.data_utils import normalize_download_df, ts_to_datetime
+from app.api.data_utils import ts_to_datetime
 from app.api.schemas import Candle, MarketHistoryResponse, MarketLastPriceResponse
 from app.ml.features import add_technical_indicators, numeric_or_none
 from app.services.market_data import download_history, download_last_price
@@ -17,7 +16,7 @@ def _df_to_candles(df: pd.DataFrame) -> list[Candle]:
     candles: list[Candle] = []
     if df.empty:
         return candles
-    
+
     enriched = add_technical_indicators(df)
     for idx, row in enriched.iterrows():
         if any(pd.isna(row.get(k)) for k in ("Open", "High", "Low", "Close")):
@@ -63,7 +62,6 @@ def history(
     candles = _df_to_candles(df)
     if not candles:
         raise HTTPException(status_code=404, detail="No market data available for given parameters")
-
 
     return MarketHistoryResponse(
         symbol=symbol.upper(),

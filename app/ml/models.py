@@ -118,29 +118,23 @@ def _make_pdt() -> PermutationDecisionTreeRegressor:
 def _make_xgb_regressor() -> object:
     try:
         from xgboost import XGBRegressor
+    except ImportError as exc:
+        raise ModelTrainingError(
+            "XGBoost model requires the xgboost package. Install project dependencies or choose another model."
+        ) from exc
 
-        return XGBRegressor(
-            objective="reg:squarederror",
-            n_estimators=80,
-            max_depth=3,
-            learning_rate=0.05,
-            subsample=0.85,
-            colsample_bytree=0.9,
-            reg_lambda=2.0,
-            random_state=42,
-            n_jobs=1,
-            verbosity=0,
-        )
-    except Exception:
-        from sklearn.ensemble import HistGradientBoostingRegressor
-
-        return HistGradientBoostingRegressor(
-            max_iter=120,
-            learning_rate=0.05,
-            max_leaf_nodes=15,
-            l2_regularization=0.1,
-            random_state=42,
-        )
+    return XGBRegressor(
+        objective="reg:squarederror",
+        n_estimators=80,
+        max_depth=3,
+        learning_rate=0.05,
+        subsample=0.85,
+        colsample_bytree=0.9,
+        reg_lambda=2.0,
+        random_state=42,
+        n_jobs=1,
+        verbosity=0,
+    )
 
 
 def _fit_predict_tabular(
@@ -225,6 +219,8 @@ def _forecast_tabular(
 
         try:
             pred = float(_fit_predict_tabular(model, ds.X, ds.y, x_last)[0])
+        except ModelTrainingError:
+            raise
         except Exception as exc:
             fallback_tail = _drift_forecast(clean, horizon_days - h + 1)
             forecasts.extend(fallback_tail)
@@ -628,6 +624,8 @@ def evaluate_many(
                     test_fraction=0.2,
                 )
             )
+        except ModelTrainingError:
+            raise
         except Exception:
             continue
 
