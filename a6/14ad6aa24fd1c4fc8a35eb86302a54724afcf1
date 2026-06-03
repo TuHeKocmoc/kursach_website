@@ -1,0 +1,23 @@
+poetry.lock
+  ai_agent 430,433,436-456,461-462,466,468,472,478-479,484,491,703-726,826-837,1248,1254-1301,1313,1335,1758-1776,2088,2094-2095,2400,2406-2407,2412,2430
+pyproject.toml
+  s_60e62771800e80::t_cd0d5656035748 9-12,16
+requirements.txt
+  s_60e62771800e80::t_44e9492edfeeb6 1-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a614ad6aa24fd1c4fc8a35eb86302a54724afcf1",
+  "prompts": {},
+  "sessions": {
+    "s_60e62771800e80": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8d9b-2972-7f70-b949-ab62019dbaa1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Danila Riazanov <nixlle@rambler.ru>"
+    }
+  }
+}
