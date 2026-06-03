@@ -1,0 +1,21 @@
+requirements.txt
+  s_60e62771800e80::t_c4fb5788731247 24,30,67,74
+pyproject.toml
+  s_60e62771800e80::t_5b9f16c9a22daa 17-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "80a9d2472f31838966be6bd24b457df404d0b0c9",
+  "prompts": {},
+  "sessions": {
+    "s_60e62771800e80": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8d9b-2972-7f70-b949-ab62019dbaa1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Danila Riazanov <nixlle@rambler.ru>"
+    }
+  }
+}
