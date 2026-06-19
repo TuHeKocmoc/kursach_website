@@ -1,10 +1,11 @@
 from datetime import datetime
-from functools import lru_cache
 from typing import Any
 
 import pandas as pd
 
 from app.ml.features import clean_ohlcv
+
+_history_cache: dict[tuple[str, str, str], pd.DataFrame] = {}
 
 
 def _load_yfinance() -> Any:
@@ -54,9 +55,18 @@ def _download_yf(
     return clean_ohlcv(raw)
 
 
-@lru_cache(maxsize=128)
 def download_history_cached(symbol: str, period: str, interval: str) -> pd.DataFrame:
-    return _download_yf(symbol=symbol, period=period, interval=interval)
+    key = (symbol, period, interval)
+    cached = _history_cache.get(key)
+    if cached is not None:
+        return cached.copy()
+
+    df = _download_yf(symbol=symbol, period=period, interval=interval)
+    if not df.empty:
+        if len(_history_cache) >= 128:
+            _history_cache.pop(next(iter(_history_cache)))
+        _history_cache[key] = df.copy()
+    return df
 
 
 def download_history(
